@@ -1,49 +1,30 @@
 <?php 
-session_start();
-if(isset($_SESSION['uid']))
-{
-	header("location:user.php");
-}
 
-if(isset($_POST["login_btn"]))
+
+if(isset($_POST["register_btn"]))
 {
 
 include("dbconnect.php");
 
+$fn = $_POST["fullname"];
+$dob = $_POST["dob"];
 $eid = $_POST["email"];
-$pwd = $_POST["password"];
+$pwd = md5($_POST["password"]);
+$cont = $_POST["contact"];
 
-if ($eid =="admin" && $pwd =="admin")
+
+$qry ="INSERT INTO `studentreg`(`id`, `fullname`, `dob`, `email`, `password`, `contact`) VALUES (NULL,'$fn','$dob','$eid','$pwd','$cont')";
+
+$result=mysqli_query($connect,$qry);
+
+if($result)
 {
-	header("location:admin.php");
-	exit();
-}
-$pwd = md5($pwd);
-$qry ="SELECT * FROM `studentreg` WHERE email = '$eid' AND password = '$pwd'";
-
-
-$result = mysqli_query($connect, $qry); 
-
-$rows = mysqli_num_rows($result);
-
-$data = mysqli_fetch_assoc($result);
-
-
-if($rows>0)	
-{
-
-	$id = $data["id"];
-	session_start();
-	$_SESSION["sid"] = $data["id"];
-
-	header("location:user.php");
+	echo ("Registration Successfull.");
 }
 else
-{
-	echo "Invalid Email or password";
+{ 
+	echo ("Something went wrong");
 }
-
-
 }
  ?>
 
@@ -65,27 +46,37 @@ else
 		<div class="row">
 			<div class="col-md-5 mx-auto">
 				<div class="card">
-					<div class="card-header bg-primary d-flex justify-content-between align-items-center text-light">
-						<h4>Login</h4>
+					<div class="card-header bg-success d-flex justify-content-between align-items-center text-light">
+						<h3>Registration form</h3>
 						<button class="close" >&times;</button>
 
 					</div>
 					<div class="card-body">
 						<form method="post">
-						
+							<div class="form-group">
+								<label>Fullname</label>
+								<input type="text" name="fullname" placeholder="fullname" class="form-control">	
+							</div>
+							<div class="form-group">
+								<label>Date of Birth</label>
+								<input type="date" name="dob" placeholder="dob" class="form-control">	
+							</div>
 							<div class="form-group">
 								<label>Email</label>
-								<input type="text" name="email" placeholder="email" class="form-control">	
+								<input type="email" name="email" placeholder="email" class="form-control">	
 							</div>
 							<div class="form-group">
 								<label>Password</label>
 								<input type="password" name="password" placeholder="password" class="form-control">	
 							</div>
-								
 							<div class="form-group">
-								<button type="submit" class="btn btn-primary" name="login_btn" >Login</button>
+								<label>Contact</label>
+								<input type="tel" name="contact" placeholder="contact" class="form-control">	
 							</div>
-							<p>Don't have an account?<a href="register.php">Sign Up</a></p>
+							<div class="form-group">
+								<button type="submit" class="btn btn-success" name="register_btn" >Register</button>
+							</div>
+							<p>Already have an account?<a href="login.php">Sign In</a> </p>
 						</form>
 					</div>
 				</div>

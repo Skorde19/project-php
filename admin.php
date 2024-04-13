@@ -1,52 +1,27 @@
 <?php 
-session_start();
-if(isset($_SESSION['uid']))
-{
-	header("location:user.php");
-}
-
-if(isset($_POST["login_btn"]))
-{
 
 include("dbconnect.php");
-
-$eid = $_POST["email"];
-$pwd = $_POST["password"];
-
-if ($eid =="admin" && $pwd =="admin")
+if(isset($_POST["notice_btn"]))
 {
-	header("location:admin.php");
-	exit();
-}
-$pwd = md5($pwd);
-$qry ="SELECT * FROM `studentreg` WHERE email = '$eid' AND password = '$pwd'";
+include("dbconnect.php");
 
+$notice= $_POST["notice"];
 
-$result = mysqli_query($connect, $qry); 
+$qry = "INSERT INTO `notice`(`notice`) VALUES ('$notice')";
 
-$rows = mysqli_num_rows($result);
+$result=mysqli_query($connect, $qry);
 
-$data = mysqli_fetch_assoc($result);
-
-
-if($rows>0)	
+if($result)
 {
-
-	$id = $data["id"];
-	session_start();
-	$_SESSION["sid"] = $data["id"];
-
-	header("location:user.php");
+	echo "Notice Added Successfully!";
 }
 else
 {
-	echo "Invalid Email or password";
+	echo "Something went wrong";
+}
 }
 
-
-}
  ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -61,37 +36,25 @@ else
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
 <body>
+	<h2>Welcome, Admin.</h2>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-5 mx-auto">
+			<div class="col-md-6">
 				<div class="card">
-					<div class="card-header bg-primary d-flex justify-content-between align-items-center text-light">
-						<h4>Login</h4>
-						<button class="close" >&times;</button>
-
-					</div>
 					<div class="card-body">
 						<form method="post">
-						
 							<div class="form-group">
-								<label>Email</label>
-								<input type="text" name="email" placeholder="email" class="form-control">	
+								<label><b><h4>Add Notice</h4></b></label>
+								<textarea name="notice" placeholder="Enter notice here.." class="form-control"></textarea>
 							</div>
 							<div class="form-group">
-								<label>Password</label>
-								<input type="password" name="password" placeholder="password" class="form-control">	
+								<button class=" form-control btn btn-primary" name="notice_btn" >Add</button>
 							</div>
-								
-							<div class="form-group">
-								<button type="submit" class="btn btn-primary" name="login_btn" >Login</button>
-							</div>
-							<p>Don't have an account?<a href="register.php">Sign Up</a></p>
 						</form>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
 </body>
 </html>
